@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lolineet.water_manager.dao.ConsumeDao">
+
+    <resultMap type="com.lolineet.water_manager.entity.Consume" id="ConsumeMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="consume" column="consume" jdbcType="NUMERIC"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="areaId" column="area_id" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ConsumeMap">
+        select
+          id, consume, create_time, area_id, type
+        from consume
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ConsumeMap">
+        select
+          id, consume, create_time, area_id, type
+        from consume
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="consume != null">
+                and consume = #{consume}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="areaId != null">
+                and area_id = #{areaId}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from consume
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="consume != null">
+                and consume = #{consume}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="areaId != null">
+                and area_id = #{areaId}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into consume(consume, create_time, area_id, type)
+        values (#{consume}, #{createTime}, #{areaId}, #{type})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into consume(consume, create_time, area_id, type)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.consume}, #{entity.createTime}, #{entity.areaId}, #{entity.type})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into consume(consume, create_time, area_id, type)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.consume}, #{entity.createTime}, #{entity.areaId}, #{entity.type})
+        </foreach>
+        on duplicate key update
+        consume = values(consume),
+        create_time = values(create_time),
+        area_id = values(area_id),
+        type = values(type)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update consume
+        <set>
+            <if test="consume != null">
+                consume = #{consume},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="areaId != null">
+                area_id = #{areaId},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from consume where id = #{id}
+    </delete>
+    <!--通过主键删除-->
+    <delete id="deleteByAreaId">
+        delete from consume where area_id = #{areaId}
+    </delete>
+
+</mapper>
+

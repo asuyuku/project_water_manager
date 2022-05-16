@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lolineet.water_manager.dao.OrderDao">
+
+    <resultMap type="com.lolineet.water_manager.entity.Order" id="OrderMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="areaId" column="area_id" jdbcType="INTEGER"/>
+        <result property="countNoFinished" column="count_no_finished" jdbcType="INTEGER"/>
+        <result property="countFinished" column="count_finished" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="OrderMap">
+        select
+          id, type, area_id, count_no_finished, count_finished
+        from order
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="OrderMap">
+        select
+          id, type, area_id, count_no_finished, count_finished
+        from `order`
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="areaId != null">
+                and area_id = #{areaId}
+            </if>
+            <if test="countNoFinished != null">
+                and count_no_finished = #{countNoFinished}
+            </if>
+            <if test="countFinished != null">
+                and count_finished = #{countFinished}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from order
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="areaId != null">
+                and area_id = #{areaId}
+            </if>
+            <if test="countNoFinished != null">
+                and count_no_finished = #{countNoFinished}
+            </if>
+            <if test="countFinished != null">
+                and count_finished = #{countFinished}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into order(type, area_id, count_no_finished, count_finished)
+        values (#{type}, #{areaId}, #{countNoFinished}, #{countFinished})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into order(type, area_id, count_no_finished, count_finished)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.type}, #{entity.areaId}, #{entity.countNoFinished}, #{entity.countFinished})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into order(type, area_id, count_no_finished, count_finished)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.type}, #{entity.areaId}, #{entity.countNoFinished}, #{entity.countFinished})
+        </foreach>
+        on duplicate key update
+        type = values(type),
+        area_id = values(area_id),
+        count_no_finished = values(count_no_finished),
+        count_finished = values(count_finished)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update order
+        <set>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="areaId != null">
+                area_id = #{areaId},
+            </if>
+            <if test="countNoFinished != null">
+                count_no_finished = #{countNoFinished},
+            </if>
+            <if test="countFinished != null">
+                count_finished = #{countFinished},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from order where id = #{id}
+    </delete>
+
+</mapper>
+

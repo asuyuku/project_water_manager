@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lolineet.water_manager.dao.DeviceStateDao">
+
+    <resultMap type="com.lolineet.water_manager.entity.DeviceState" id="DeviceStateMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="areaId" column="area_id" jdbcType="INTEGER"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DeviceStateMap">
+        select
+          id, count, area_id, state
+        from device_state
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DeviceStateMap">
+        select
+          id, count, area_id, state
+        from device_state
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="count != null">
+                and count = #{count}
+            </if>
+            <if test="areaId != null">
+                and area_id = #{areaId}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from device_state
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="count != null">
+                and count = #{count}
+            </if>
+            <if test="areaId != null">
+                and area_id = #{areaId}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into device_state(count, area_id, state)
+        values (#{count}, #{areaId}, #{state})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into device_state(count, area_id, state)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.count}, #{entity.areaId}, #{entity.state})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into device_state(count, area_id, state)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.count}, #{entity.areaId}, #{entity.state})
+        </foreach>
+        on duplicate key update
+        count = values(count),
+        area_id = values(area_id),
+        state = values(state)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update device_state
+        <set>
+            <if test="count != null">
+                count = #{count},
+            </if>
+            <if test="areaId != null">
+                area_id = #{areaId},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from device_state where id = #{id}
+    </delete>
+
+</mapper>
+

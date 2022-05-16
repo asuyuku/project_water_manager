@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lolineet.water_manager.dao.AreaDao">
+
+    <resultMap type="com.lolineet.water_manager.entity.Area" id="AreaMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="areaName" column="area_name" jdbcType="VARCHAR"/>
+        <result property="longitude" column="longitude" jdbcType="NUMERIC"/>
+        <result property="latitude" column="latitude" jdbcType="NUMERIC"/>
+        <result property="countPeople" column="count_people" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AreaMap">
+        select
+          id, area_name, longitude, latitude, count_people
+        from area
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AreaMap">
+        select
+          id, area_name, longitude, latitude, count_people
+        from area
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="areaName != null and areaName != ''">
+                and area_name = #{areaName}
+            </if>
+            <if test="longitude != null">
+                and longitude = #{longitude}
+            </if>
+            <if test="latitude != null">
+                and latitude = #{latitude}
+            </if>
+            <if test="countPeople != null">
+                and count_people = #{countPeople}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from area
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="areaName != null and areaName != ''">
+                and area_name = #{areaName}
+            </if>
+            <if test="longitude != null">
+                and longitude = #{longitude}
+            </if>
+            <if test="latitude != null">
+                and latitude = #{latitude}
+            </if>
+            <if test="countPeople != null">
+                and count_people = #{countPeople}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into area(area_name, longitude, latitude, count_people)
+        values (#{areaName}, #{longitude}, #{latitude}, #{countPeople})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into area(area_name, longitude, latitude, count_people)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.areaName}, #{entity.longitude}, #{entity.latitude}, #{entity.countPeople})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into area(area_name, longitude, latitude, count_people)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.areaName}, #{entity.longitude}, #{entity.latitude}, #{entity.countPeople})
+        </foreach>
+        on duplicate key update
+        area_name = values(area_name),
+        longitude = values(longitude),
+        latitude = values(latitude),
+        count_people = values(count_people)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update area
+        <set>
+            <if test="areaName != null and areaName != ''">
+                area_name = #{areaName},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="countPeople != null">
+                count_people = #{countPeople},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from area where id = #{id}
+    </delete>
+
+</mapper>
+

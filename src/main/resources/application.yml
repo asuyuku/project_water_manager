@@ -7,7 +7,8 @@ spring:
       suffix: .jsp
   datasource:
     username: root
-    password: 123456
+    password: Meng15222588686
+#    password: 123456
     url: jdbc:mysql://localhost:3306/water_manager?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
 mybatis:
   mapper-locations: classpath:/mapper/*.xml
